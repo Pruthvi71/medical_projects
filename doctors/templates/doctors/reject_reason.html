@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-center align-items-center" style="min-height:80vh;">
+    <div class="bg-white p-4 shadow rounded" style="width:450px;">
+
+        <h4 class="text-danger fw-bold mb-3">
+            Reject Appointment
+        </h4>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            {% for value, label in reasons %}
+                <div class="form-check mb-2">
+                    <input class="form-check-input"
+                           type="radio"
+                           name="reason"
+                           value="{{ value }}"
+                           required>
+                    <label class="form-check-label">
+                        {{ label }}
+                    </label>
+                </div>
+            {% endfor %}
+
+            <button class="btn btn-danger w-100 mt-3">
+                Confirm Reject
+            </button>
+        </form>
+
+        <div class="text-center mt-3">
+            <a href="{% url 'doctor_dashboard' %}">Cancel</a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

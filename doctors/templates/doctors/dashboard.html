@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <h2>Doctor Dashboard</h2>
+
+    {% if appointments %}
+    <table class="table table-striped mt-4">
+        <thead>
+            <tr>
+                <th>Patient</th>
+                <th>Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for appt in appointments %}
+            <tr>
+                <td>{{ appt.patient.username }}</td>
+                <td>{{ appt.date }}</td>
+                <td>{{ appt.status }}</td>
+                <td>
+                    {% if appt.status == "Pending" %}
+                        <a href="{% url 'approve_appointment' appt.id %}"
+                           class="btn btn-success btn-sm">
+                           Approve
+                        </a>
+
+                        <form method="post"
+                              action="{% url 'reject_appointment' appt.id %}"
+                              style="display:inline;">
+                            {% csrf_token %}
+                            <select name="reason" required>
+                                <option value="">Reason</option>
+                                {% for key, val in appt.REJECT_REASONS %}
+                                    <option value="{{ key }}">{{ val }}</option>
+                                {% endfor %}
+                            </select>
+                            <button class="btn btn-danger btn-sm">
+                                Reject
+                            </button>
+                        </form>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>No appointments</p>
+    {% endif %}
+</div>
+
+{% endblock %}

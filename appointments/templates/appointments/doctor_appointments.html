@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h3>Doctor Appointments</h3>
+
+<table class="table table-striped">
+    <tr>
+        <th>Patient</th>
+        <th>Date</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+
+    {% for a in appointments %}
+    <tr>
+        <td>{{ a.patient.username }}</td>
+        <td>{{ a.date }}</td>
+        <td>{{ a.status }}</td>
+        <td>
+            {% if a.status == "Pending" %}
+                <a class="btn btn-success btn-sm"
+                   href="{% url 'update_status' a.id 'Approved' %}">Approve</a>
+                <a class="btn btn-danger btn-sm"
+                   href="{% url 'update_status' a.id 'Rejected' %}">Reject</a>
+            {% else %}
+                Done
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="row justify-content-center align-items-center" style="min-height:75vh;">
+  <div class="col-lg-11">
+    <div class="row bg-white shadow-lg rounded-4 overflow-hidden">
+
+      <!-- LEFT IMAGE PANEL -->
+      <div class="col-md-6 d-flex flex-column justify-content-center align-items-center p-5"
+           style="background:linear-gradient(135deg,#3b82f6,#2563eb);">
+        <img src="https://static.vecteezy.com/system/resources/previews/017/415/572/large_2x/medical-team-doctor-nurse-surgeon-and-ppe-coat-png.png"
+             style="max-width:260px;">
+        <h3 class="text-white fw-bold mt-4">Welcome Back</h3>
+        <p class="text-white text-center opacity-75">
+          Login to manage appointments and access your dashboard
+        </p>
+      </div>
+
+      <!-- RIGHT FORM PANEL -->
+      <div class="col-md-6 p-5 animate">
+        <h3 class="fw-bold mb-4 text-center" style="color:#2563eb;">Login</h3>
+
+        <form method="post">
+          {% csrf_token %}
+
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Username</label>
+            <input type="text" name="username" class="form-control" required>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Password</label>
+            <input type="password" name="password" class="form-control" required>
+          </div>
+
+          <button class="btn btn-primary w-100 py-2"
+                  style="background:#2563eb;border:none;">
+            Login
+          </button>
+        </form>
+        <div class="text-center mt-3">
+    <a href="{% url 'password_reset' %}" class="text-primary fw-semibold">
+        Forgot Password?
+    </a>
+</div>
+
+        <p class="text-center mt-4 text-secondary">
+          Don’t have an account?
+          <a href="/accounts/register/" class="fw-semibold text-decoration-none"
+             style="color:#2563eb;">Register</a>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
