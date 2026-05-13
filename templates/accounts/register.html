@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-5" style="max-width:400px;">
+
+    <h2 class="text-center mb-4">Register</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <!-- USERNAME -->
+        <div class="mb-3">
+            <input type="text"
+                   name="username"
+                   class="form-control"
+                   placeholder="Username"
+                   required>
+        </div>
+
+        <!-- EMAIL -->
+        <div class="mb-3">
+            <input type="email"
+                   name="email"
+                   class="form-control"
+                   placeholder="Email Address"
+                   required>
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="mb-3">
+            <input type="password"
+                   name="password1"
+                   class="form-control"
+                   placeholder="Password"
+                   required>
+        </div>
+
+        <!-- CONFIRM PASSWORD -->
+        <div class="mb-3">
+            <input type="password"
+                   name="password2"
+                   class="form-control"
+                   placeholder="Confirm Password"
+                   required>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">
+            Register
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}
