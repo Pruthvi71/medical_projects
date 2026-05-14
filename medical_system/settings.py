@@ -146,3 +146,4 @@ EMAIL_HOST_USER = 'khenivraj2007@gmail.com'
 EMAIL_HOST_PASSWORD = 'vpiofzvhgelsnmwe'
 
 DEFAULT_FROM_EMAIL = 'khenivraj2007@gmail.com'
+SERVER_EMAIL = 'khenivraj2007@gmail.com'
