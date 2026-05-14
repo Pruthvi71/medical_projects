@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-$q6ne1$c!91_$%xia9c##30gfar!omjj7dl%+ejm9^%%vdqy8y
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['medical-projects.onrender.com']
 
 
 # Application definition
@@ -134,12 +134,9 @@ LOGOUT_REDIRECT_URL = '/'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 EMAIL_HOST = 'smtp.gmail.com'
-
 EMAIL_PORT = 587
-
 EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = 'khenivraj2007@gmail.com'
-
-EMAIL_HOST_PASSWORD = 'dqgy cczu eacq bews'
+EMAIL_HOST_PASSWORD = 'dqgycczueacqbews'
 
