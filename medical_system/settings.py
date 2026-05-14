@@ -143,4 +143,6 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = 'khenivraj2007@gmail.com'
-EMAIL_HOST_PASSWORD = 'vpio fzvh gels nmwe'
+EMAIL_HOST_PASSWORD = 'vpiofzvhgelsnmwe'
+
+DEFAULT_FROM_EMAIL = 'khenivraj2007@gmail.com'
