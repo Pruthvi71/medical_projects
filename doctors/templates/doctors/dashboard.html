@@ -2,7 +2,42 @@
 {% block content %}
 
 <div class="container mt-5">
-    <h2>Doctor Dashboard</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-1">Doctor Dashboard</h2>
+            <p class="text-secondary mb-0">Dr. {{ doctor.display_name }} · {{ doctor.specialization }}</p>
+        </div>
+        <a href="{% url 'doctor_logout' %}" class="btn btn-outline-primary">Logout</a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="bg-white border rounded-3 p-3">
+                <div class="text-secondary">Pending</div>
+                <div class="fs-3 fw-bold text-warning">{{ pending_count }}</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="bg-white border rounded-3 p-3">
+                <div class="text-secondary">Approved</div>
+                <div class="fs-3 fw-bold text-success">{{ approved_count }}</div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="bg-white border rounded-3 p-3">
+                <div class="text-secondary">Rejected</div>
+                <div class="fs-3 fw-bold text-danger">{{ rejected_count }}</div>
+            </div>
+        </div>
+    </div>
 
     {% if appointments %}
     <table class="table table-striped mt-4">
@@ -22,10 +57,14 @@
                 <td>{{ appt.status }}</td>
                 <td>
                     {% if appt.status == "Pending" %}
-                        <a href="{% url 'approve_appointment' appt.id %}"
-                           class="btn btn-success btn-sm">
-                           Approve
-                        </a>
+                        <form method="post"
+                              action="{% url 'approve_appointment' appt.id %}"
+                              style="display:inline;">
+                            {% csrf_token %}
+                            <button class="btn btn-success btn-sm">
+                                Approve
+                            </button>
+                        </form>
 
                         <form method="post"
                               action="{% url 'reject_appointment' appt.id %}"

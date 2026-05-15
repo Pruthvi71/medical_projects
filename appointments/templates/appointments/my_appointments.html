@@ -4,6 +4,14 @@
 <div class="container mt-5">
     <h2 class="mb-4">My Appointments</h2>
 
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
     {% if appointments %}
         <table class="table table-bordered">
             <thead>
@@ -12,21 +20,34 @@
                     <th>Date</th>
                     <th>Status</th>
                     <th>Reject Reason</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
                 {% for appt in appointments %}
                 <tr>
-                    <td>{{ appt.doctor.name }}</td>
+                    <td>Dr. {{ appt.doctor.display_name }}</td>
                     <td>{{ appt.date }}</td>
                     <td>
-                        <span class="badge bg-info">
+                        <span class="badge {% if appt.status == 'Approved' %}bg-success{% elif appt.status == 'Rejected' %}bg-danger{% else %}bg-warning text-dark{% endif %}">
                             {{ appt.status }}
                         </span>
                     </td>
                     <td>
                         {% if appt.reject_reason %}
                             {{ appt.reject_reason }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if appt.status == 'Pending' %}
+                            <form method="post" action="{% url 'cancel_appointment' appt.id %}">
+                                {% csrf_token %}
+                                <button class="btn btn-outline-danger btn-sm">
+                                    Cancel
+                                </button>
+                            </form>
                         {% else %}
                             -
                         {% endif %}

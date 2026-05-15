@@ -6,5 +6,9 @@ class Doctor(models.Model):
     specialization = models.CharField(max_length=100)
     available = models.BooleanField(default=True)
 
+    @property
+    def display_name(self):
+        return self.user.get_full_name() or self.user.username
+
     def __str__(self):
-        return self.user.username
+        return self.display_name

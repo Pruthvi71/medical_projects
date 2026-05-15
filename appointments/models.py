@@ -39,3 +39,6 @@ class Appointment(models.Model):
 
     def __str__(self):
         return f"{self.patient.username} - {self.status}"
+
+    class Meta:
+        ordering = ['-date', '-id']

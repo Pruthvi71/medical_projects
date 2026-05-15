@@ -18,10 +18,14 @@
         <td>{{ a.status }}</td>
         <td>
             {% if a.status == "Pending" %}
-                <a class="btn btn-success btn-sm"
-                   href="{% url 'update_status' a.id 'Approved' %}">Approve</a>
-                <a class="btn btn-danger btn-sm"
-                   href="{% url 'update_status' a.id 'Rejected' %}">Reject</a>
+                <form method="post" action="{% url 'update_status' a.id 'Approved' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button class="btn btn-success btn-sm">Approve</button>
+                </form>
+                <form method="post" action="{% url 'update_status' a.id 'Rejected' %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button class="btn btn-danger btn-sm">Reject</button>
+                </form>
             {% else %}
                 Done
             {% endif %}
