@@ -7,11 +7,9 @@ urlpatterns = [
     path('login/', views.user_login, name='login'),
     path('logout/', views.user_logout, name='logout'),
     
-path(
+    path(
         'password-reset/',
-        auth_views.PasswordResetView.as_view(
-            template_name='accounts/password_reset.html'
-        ),
+        views.VrajCarePasswordResetView.as_view(),
         name='password_reset'
     ),
 
@@ -25,9 +23,7 @@ path(
 
     path(
         'reset/<uidb64>/<token>/',
-        auth_views.PasswordResetConfirmView.as_view(
-            template_name='accounts/password_reset_confirm.html'
-        ),
+        views.VrajCarePasswordResetConfirmView.as_view(),
         name='password_reset_confirm'
     ),
 

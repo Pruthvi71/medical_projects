@@ -1,2 +1,29 @@
-Click On The Link To View Projects Pictures
+## VRAJ Care
+
+Django-based doctor appointment booking system with patient registration,
+doctor approval workflow, appointment cancellation, and password reset support.
+
+Project screenshots:
 https://drive.google.com/drive/folders/1U0dkGqYCfpAh__XIeurLs8ohiXD9cgyw?usp=sharing
+
+## Password Reset Email Setup
+
+Password reset emails are sent through SMTP when these environment variables are set.
+For local development, copy `.env.example` to `.env` and fill in your real values:
+
+```text
+EMAIL_HOST=smtp.gmail.com
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER=your-email@gmail.com
+EMAIL_HOST_PASSWORD=your-google-app-password
+DEFAULT_FROM_EMAIL=your-email@gmail.com
+PUBLIC_SITE_URL=https://medical-projects.onrender.com
+```
+
+For Gmail, use a Google App Password, not your normal Gmail password. If the
+email variables are missing, Django falls back to the console email backend and
+prints reset links in the terminal.
+
+Set `PUBLIC_SITE_URL` to the website address that users can open from their
+phone. Do not use `localhost` or `127.0.0.1` for mobile password reset emails.

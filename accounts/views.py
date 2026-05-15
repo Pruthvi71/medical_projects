@@ -2,6 +2,19 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.views import PasswordResetView
+from django.conf import settings
+from django.urls import reverse_lazy
+from django.utils.http import urlsafe_base64_decode
+from django.views import View
+import logging
+from urllib.parse import urlparse
+
+from .forms import SimpleSetPasswordForm, VisibleFailurePasswordResetForm
+
+
+logger = logging.getLogger(__name__)
 
 
 # ================= REGISTER =================
@@ -12,7 +25,7 @@ def register(request):
         password1 = request.POST.get('password1')
         password2 = request.POST.get('password2')
 
-        if not username or not password1 or not password2:
+        if not username or not email or not password1 or not password2:
             messages.error(request, "All fields are required")
             return redirect('register')
 
@@ -22,6 +35,10 @@ def register(request):
 
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username already exists")
+            return redirect('register')
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Email already registered")
             return redirect('register')
 
         user = User.objects.create_user(
@@ -61,3 +78,100 @@ def user_logout(request):
     logout(request)
     request.session.flush() 
     return redirect('/')
+
+
+class VrajCarePasswordResetView(PasswordResetView):
+    form_class = VisibleFailurePasswordResetForm
+    template_name = 'accounts/password_reset.html'
+    email_template_name = 'accounts/password_reset_email.txt'
+    subject_template_name = 'accounts/password_reset_subject.txt'
+    success_url = reverse_lazy('password_reset_done')
+    from_email = settings.DEFAULT_FROM_EMAIL
+
+    def form_valid(self, form):
+        if settings.EMAIL_BACKEND == 'django.core.mail.backends.console.EmailBackend':
+            messages.warning(
+                self.request,
+                'Email is not configured yet. The reset link was printed in the server terminal instead of being sent to an inbox.'
+            )
+
+        try:
+            opts = {
+                'use_https': self.request.is_secure(),
+                'token_generator': self.token_generator,
+                'from_email': self.from_email,
+                'email_template_name': self.email_template_name,
+                'subject_template_name': self.subject_template_name,
+                'request': self.request,
+                'html_email_template_name': self.html_email_template_name,
+                'extra_email_context': self.extra_email_context,
+            }
+
+            if settings.PUBLIC_SITE_URL:
+                public_site = urlparse(settings.PUBLIC_SITE_URL)
+                opts['domain_override'] = public_site.netloc
+                opts['use_https'] = public_site.scheme == 'https'
+
+            form.save(**opts)
+            return redirect(self.get_success_url())
+        except Exception:
+            logger.exception('Password reset email could not be sent.')
+            messages.error(
+                self.request,
+                'Password reset email could not be sent. Please check the SMTP email settings and try again.'
+            )
+            return self.form_invalid(form)
+
+
+class VrajCarePasswordResetConfirmView(View):
+    template_name = 'accounts/password_reset_confirm.html'
+    success_url = reverse_lazy('password_reset_complete')
+    token_generator = default_token_generator
+
+    def get_user(self, uidb64):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            return User.objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.user = self.get_user(kwargs.get('uidb64'))
+        self.token = kwargs.get('token')
+        self.validlink = (
+            self.user is not None
+            and self.token_generator.check_token(self.user, self.token)
+        )
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        form = SimpleSetPasswordForm(self.user) if self.validlink else None
+        return render(request, self.template_name, {
+            'form': form,
+            'validlink': self.validlink,
+        })
+
+    def post(self, request, *args, **kwargs):
+        if not self.validlink:
+            messages.error(request, 'This password reset link is invalid or has expired.')
+            return render(request, self.template_name, {
+                'form': None,
+                'validlink': False,
+                'reset_error': 'This password reset link is invalid or has expired.',
+            })
+
+        form = SimpleSetPasswordForm(self.user, request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your password has been changed. You can login now.')
+            return render(request, 'accounts/password_reset_complete.html')
+
+        messages.error(
+            request,
+            'Password was not changed. Please fix the password errors shown below.'
+        )
+        return render(request, self.template_name, {
+            'form': form,
+            'validlink': True,
+            'reset_error': 'Password was not changed. Check both password boxes below.',
+        })
